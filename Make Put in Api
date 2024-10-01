@@ -1,0 +1,22 @@
+import { NextResponse } from 'next/server';
+import { getUserById, updateUser } from './database'; // Assuming you have functions to fetch and update users
+
+export async function PUT(request, { params }) {
+  const userId = params.id;
+  const updatedUserData = await request.json();
+
+  try {
+    const existingUser = await getUserById(userId);
+
+    if (!existingUser) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    const updatedUser = await updateUser(userId, updatedUserData);
+
+    return NextResponse.json(updatedUser, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
+}
