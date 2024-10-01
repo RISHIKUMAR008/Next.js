@@ -1,0 +1,81 @@
+// pages/users/[id].js
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+
+export default function EditUser() {
+  const router = useRouter();
+  const { id } = router.query;
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+  });
+
+  // Fetch current user details when the component mounts
+  useEffect(() => {
+    if (id) {
+      fetch(`/api/users/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setUserData({ name: data.name, email: data.email });
+        });
+    }
+  }, [id]);
+
+  // Handle form input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission to call PUT API
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const res = await fetch(`/api/users/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (res.ok) {
+      alert('User updated successfully!');
+      router.push('/users'); // Navigate back to the user list
+    } else {
+      alert('Error updating user.');
+    }
+  };
+
+  return (
+    <div>
+      <h1>Edit User</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="name">Name:</label>
+          <input
+            type="text"
+            name="name"
+            value={userData.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={userData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit">Update User</button>
+      </form>
+    </div>
+  );
+}
