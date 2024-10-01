@@ -1,0 +1,32 @@
+import { useState } from 'react';
+
+export default function Page() {
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [email, setEmail] = useState('');
+
+  const addUser = async () => {
+    const response = await fetch('http://localhost:3000/api/user', {
+      method: 'POST',
+      body: JSON.stringify({ name, age, email }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert('New user added');
+    } else {
+      console.error('Error adding user:', data);
+    }
+  };
+
+  return (
+    <div className="add-user">
+      <h1>Add New User</h1>
+      <input type="text" value={name} placeholder="Enter Name" onChange={(e) => setName(e.target.value)} />
+      <input type="text" value={age} placeholder="Enter Age" onChange={(e) => setAge(e.target.value)} />
+      <input type="text" value={email} placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)} />
+      <button onClick={addUser}>Add User</button>
+    </div>
+  );
+}
