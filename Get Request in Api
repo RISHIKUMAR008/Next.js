@@ -1,0 +1,22 @@
+import Der from "@/util/db";
+import { NextResponse } from "next/server";
+
+export function GET() {
+  const data = user; // Assuming user is defined somewhere
+  return NextResponse.json(data, { status: 200 });
+}
+
+export async function POST(request) {
+  let payload = await request.json();
+
+  console.log(payload.name);
+
+  if (!payload.name || !payload.age || !payload.email) {
+    return NextResponse.json(
+      { result: "Required field not found", success: false },
+      { status: 400 }
+    );
+  }
+
+  // ... rest of the POST logic
+}
